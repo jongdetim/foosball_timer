@@ -1,1 +1,1 @@
-python training_timer.py c
+python training_timer.py
