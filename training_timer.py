@@ -47,13 +47,19 @@ def	output_sentence(sentence, set_pause, engine):
 	set_pause = check_pause(set_pause)
 	return set_pause
 
-def training_loop(training, engine, set_pause, interval_range, weights, calls):
+def training_loop(training, engine, interval_range, weights, calls, shot_series=None):
 	if training == "1":
 		engine.say("start three baar training")
+		print("start 3-bar training")
 	elif training == "2":
 		engine.say("start five baar training")
+		print("start 5-bar training")
+	elif training == "3":
+		engine.say("start two baar training. " + shot_series)
+		print("start 2-bar training: " + shot_series)
 	engine.runAndWait()
 	time.sleep(3)
+	global set_pause
 	while 1:
 		set_pause = check_pause(set_pause)
 		clock = random.randrange(3, 4 + interval_range)
@@ -84,9 +90,9 @@ keyboard.on_press_key("space", pause)
 
 # input reading. configuring settings
 training = input("select your training:\n\
-1: 3-bar\n2: 5-bar\n")
-while not training == "1" and not training == "2":
-	training = input("wrong input. choose 1 or 2:\n1: 3-bar training\n2: 5-bar training\n")
+1: 3-bar\n2: 5-bar\n3: 2-bar\n")
+while not training == "1" and not training == "2" and not training == "3":
+	training = input("wrong input. choose 1 or 2:\n1: 3-bar training\n2: 5-bar training\n3: 2-bar training\n")
 if training == "1":
 	settings = input("do you want to use default settings or custom settings:\n\
 1: default settings\n2: custom settings\n")
@@ -121,7 +127,24 @@ elif training == "2":
 	calls = ["lane", "wall", "overlane"]
 	weights = [0.4, 0.4, 0.1]
 	interval_range = 7
+if training == "3":
+	shot_series = input("choose a 2-bar training:\n1: pullshot\n2: pinshot\n3: bankshot\n")
+	while shot_series != "1" and shot_series != "2" and shot_series != "3":
+		shot_series = input("wrong input. choose a 2-bar training:\n1: pullshot\n2: pinshot\n3: bankshot\n")
+	if shot_series == "1":
+		shot_series = "pull shot"
+		calls = ["slice", "short square", "mid square", "spray mid", "long"]
+	if shot_series == "2":
+		shot_series = "pin shot"
+		calls = ["short", "middle", "long", "near bank", "far bank"]
+	if shot_series == "3":
+		shot_series = "bank shot"
+		calls = ["far bank", "near bank", "pullshot", "up slice", "down slice"]
+	weights = [0.2, 0.2, 0.2, 0.2, 0.2]
+	interval_range = 7
+else:
+	shot_series = None
 
-training_loop(training, engine, set_pause, interval_range, weights, calls)
+training_loop(training, engine, interval_range, weights, calls, shot_series)
 
 
