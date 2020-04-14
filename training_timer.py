@@ -24,6 +24,12 @@ def kill_handler():
 	print("quitting...")
 	os.kill(os.getpid(), signal.SIGINT)
 
+def loopfor(funct, secs, args=None):
+	global mytimer
+	mytimer.start()
+	while mytimer.get() < secs:
+		funct(args)
+
 def pause(_):
 	global set_pause
 	set_pause = 1
@@ -32,20 +38,23 @@ def showusage():
 	print("usage: python training_timer.py\n[space]: pause, [esc]: quit")
 	exit()
 
-def check_pause(set_pause):
+def check_pause(flag=None):
+	global set_pause
+	global mytimer
+	if flag == None:
+		mytimer.start()
 	if set_pause == 1:
 		print("training paused. press space to resume")
-		while not keyboard.is_pressed('space') == 1:
-			pass
+		mytimer.pause()
+		keyboard.wait('space')
+		mytimer.resume()
 		print("resuming training...")
-		return 0
+		set_pause = 0
 
-def	output_sentence(sentence, set_pause, engine):
+def	output_sentence(sentence, engine):
 	engine.say(sentence)
-	set_pause = check_pause(set_pause)
+	check_pause()
 	engine.runAndWait()
-	set_pause = check_pause(set_pause)
-	return set_pause
 
 def training_loop(training, engine, interval_range, weights, calls, shot_series=None):
 	if training == "1":
@@ -58,19 +67,54 @@ def training_loop(training, engine, interval_range, weights, calls, shot_series=
 		engine.say("start two baar training. " + shot_series)
 		print("start 2-bar training: " + shot_series)
 	engine.runAndWait()
-	time.sleep(3)
+	loopfor(check_pause, 3, 1)
 	global set_pause
 	while 1:
-		set_pause = check_pause(set_pause)
+		check_pause()
 		clock = random.randrange(3, 4 + interval_range)
 		shotcall = random.choices(calls, weights)
-		output_sentence("set up the ball", set_pause, engine)
-		output_sentence("time in", set_pause, engine)
-		time.sleep(clock)
-		output_sentence(shotcall, set_pause, engine)
+		output_sentence("set up the ball", engine)
+		output_sentence("time in", engine)
+		loopfor(check_pause, clock, 1)
+		output_sentence(shotcall, engine)
 		print("%s %*d seconds" %(*shotcall, 13 - len(*shotcall), clock))
 		winsound.Beep(2500, 500)
-		time.sleep(2.5)
+		loopfor(check_pause, 2.5, 1)
+
+class MyTimer():
+
+    def __init__(self):
+        self.timestarted = None
+        self.timepaused = None
+        self.paused = False
+
+    def start(self):
+        self.timestarted = time.time()
+
+    def pause(self):
+        if self.timestarted is None:
+            raise ValueError("Timer not started")
+        if self.paused:
+            raise ValueError("Timer is already paused")
+        self.timepaused = time.time()
+        self.paused = True
+
+    def resume(self):
+        if self.timestarted is None:
+            raise ValueError("Timer not started")
+        if not self.paused:
+            raise ValueError("Timer is not paused")
+        pausetime = time.time() - self.timepaused
+        self.timestarted = self.timestarted + pausetime
+        self.paused = False
+
+    def get(self):
+        if self.timestarted is None:
+            raise ValueError("Timer not started")
+        if self.paused:
+            return self.timepaused - self.timestarted
+        else:
+            return time.time() - self.timestarted
 
 # print banner
 print_banner()
@@ -85,7 +129,7 @@ voices = engine.getProperty('voices')
 rate = engine.getProperty('rate')
 engine.setProperty('rate', rate-20)
 engine.setProperty('voice', voices[1].id)
-
+mytimer = MyTimer()
 keyboard.on_press_key("space", pause)
 
 # input reading. configuring settings
