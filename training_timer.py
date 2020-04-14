@@ -51,10 +51,16 @@ def check_pause(flag=None):
 		print("resuming training...")
 		set_pause = 0
 
-def	output_sentence(sentence, engine):
+def	output_sentence(sentence, engine, speed):
+	global rate
+	engine.setProperty('rate', rate + speed)
 	engine.say(sentence)
-	check_pause()
 	engine.runAndWait()
+
+def delayed_beep(offset):
+	global beepdelay
+	time.sleep(beepdelay + 0.05 * (offset - 4))
+	winsound.Beep(2500, 500)
 
 def training_loop(training, engine, interval_range, weights, calls, shot_series=None):
 	if training == "1":
@@ -72,13 +78,15 @@ def training_loop(training, engine, interval_range, weights, calls, shot_series=
 	while 1:
 		check_pause()
 		clock = random.randrange(3, 4 + interval_range)
-		shotcall = random.choices(calls, weights)
-		output_sentence("set up the ball", engine)
-		output_sentence("time in", engine)
+		shotcall = random.choices(calls, weights)[0]
+		output_sentence("set up the ball", engine, -10)
+		check_pause()
+		output_sentence("time in", engine, 0)
 		loopfor(check_pause, clock, 1)
-		output_sentence(shotcall, engine)
-		print("%s %*d seconds" %(*shotcall, 13 - len(*shotcall), clock))
-		winsound.Beep(2500, 500)
+		beep = threading.Thread(target=delayed_beep, args=([len(shotcall)]))
+		beep.start()
+		output_sentence(shotcall, engine, 30)
+		print("%s %*d seconds" %(shotcall, 13 - len(shotcall), clock))
 		loopfor(check_pause, 2.5, 1)
 
 class MyTimer():
@@ -188,6 +196,11 @@ if training == "3":
 	interval_range = 7
 else:
 	shot_series = None
+
+beepdelay = input("choose the time between shotcall and beep (reaction speed):\nBeginner: 1.2\nAdvanced: 1\nPro: 0.8\n")
+while not beepdelay.isnumeric or float(beepdelay) < 0:
+	beepdelay = input("wrong input. choose the time between shotcall and beep in seconds:\n")
+beepdelay = float(beepdelay)
 
 training_loop(training, engine, interval_range, weights, calls, shot_series)
 
