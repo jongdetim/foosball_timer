@@ -39,7 +39,7 @@ def	handle_startstop(_=None):
 		startstopB.config(relief=SUNKEN, text="◼ Stop Training")
 		probabilities = [prob.get() for prob in probs[:shot_amount.get()]]
 		shots = get_series_shots(series)
-		training_loopT = threading.Thread(target=t.training_loop, args=(training_selection, t.engine, shotcall_delay, probabilities, shots[:shot_amount.get()], beepdelay.get(), series))
+		training_loopT = threading.Thread(target=t.training_loop, args=(training_selection, t.engine, shotcall_delay.get(), probabilities, shots[:shot_amount.get()], beepdelay.get(), series))
 		training_loopT.daemon = True
 		training_loopT.start()
 	elif startswitch == 1:

@@ -1,5 +1,4 @@
 import random
-import signal
 import os
 import pyttsx3
 import keyboard
@@ -7,6 +6,7 @@ import threading
 import winsound
 import time
 import __main__ as gui
+import sys
 
 def	print_banner():
 	print("\
@@ -17,23 +17,12 @@ def	print_banner():
 ██║     ╚██████╔╝╚██████╔╝███████║       ██║   ██║  ██║██║  ██║██║██║ ╚████║███████╗██║  ██║\n\
 ╚═╝      ╚═════╝  ╚═════╝ ╚══════╝       ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝")
 
-def kill_handler():
-	switch = 0
-	while switch == 0:
-		if keyboard.is_pressed('esc'):
-			switch = 1
-	print("quitting...")
-	os.kill(os.getpid(), signal.SIGINT)
-
 def loopfor(funct, secs, args=None):
 	global mytimer
 	mytimer.start()
 	while mytimer.get() < secs:
+		time.sleep(0.02)
 		funct(args)
-
-def showusage():
-	print("usage: python training_timer.py\n[space]: pause, [esc]: quit")
-	exit()
 
 class KillTraining(Exception): pass
 
@@ -45,7 +34,7 @@ def check_pause(flag=None):
 		print("training paused. press space to resume")
 		mytimer.pause()
 		while gui.pauseswitch == 1:
-			pass
+			time.sleep(0.02)
 		mytimer.resume()
 		print("resuming training...")
 	if gui.startswitch == 0:
@@ -60,9 +49,11 @@ def	output_sentence(sentence, engine, speed):
 def delayed_beep(offset, beepdelay):
 	time.sleep(beepdelay + 0.05 + 0.05 * (offset - 4 if offset > 4 else 0))
 	winsound.Beep(2500, 500)
+	# sys.stdout.write('\a')					<--- crossplatform method to produce a system sound. is not accurate in timing
 
 def training_loop(training, engine, interval_range, weights, calls, beepdelay, shot_series=None):
 	try:
+		engine.setProperty('rate', rate-20)
 		if training == 3:
 			engine.say("start three baar training. " + shot_series)
 			print("start 3-bar training: " + shot_series)
@@ -76,7 +67,7 @@ def training_loop(training, engine, interval_range, weights, calls, beepdelay, s
 		loopfor(check_pause, 3, 1)
 		while 1:
 			check_pause()
-			clock = random.randrange(0, 1 + interval_range.get())
+			clock = random.randrange(1, 2 + interval_range)
 			shotcall = random.choices(calls, weights)[0]
 			output_sentence("set up the ball", engine, -10)
 			check_pause()
@@ -86,7 +77,10 @@ def training_loop(training, engine, interval_range, weights, calls, beepdelay, s
 			beep.start()
 			output_sentence(shotcall, engine, 30)
 			print("%s %*d seconds" %(shotcall, 13 - len(shotcall), clock))
-			loopfor(check_pause, 2.5, 1)
+			if training == 5:
+				loopfor(check_pause, 2.0, 1)
+			else:
+				loopfor(check_pause, 2.5, 1)
 	except KillTraining:
 		print("stopped")
 
