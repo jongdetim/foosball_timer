@@ -8,6 +8,8 @@ import time
 import __main__ as gui
 import sys
 
+TICKRATE = (1.0 / 100)
+
 def	print_banner():
 	print("\
 ███████╗ ██████╗  ██████╗ ███████╗    ████████╗██████╗  █████╗ ██╗███╗   ██╗███████╗██████╗ \n\
@@ -21,7 +23,7 @@ def loopfor(funct, secs, args=None):
 	global mytimer
 	mytimer.start()
 	while mytimer.get() < secs:
-		time.sleep(0.02)
+		time.sleep(TICKRATE)
 		funct(args)
 
 class KillTraining(Exception): pass
@@ -34,7 +36,7 @@ def check_pause(flag=None):
 		print("training paused. press space to resume")
 		mytimer.pause()
 		while gui.pauseswitch == 1:
-			time.sleep(0.02)
+			time.sleep(TICKRATE)
 		mytimer.resume()
 		print("resuming training...")
 	if gui.startswitch == 0:

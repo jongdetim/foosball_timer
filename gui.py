@@ -7,7 +7,7 @@ button_size_train = -6
 defaultfont = 'TkDefaultFont 10'
 bigfont = 'TkDefaultFont 11 bold'
 
-shots = ["pull", "push", "middle", "near split", "far split", "near cross", "far cross"]
+# shots = ["pull", "push", "middle", "near split", "far split", "near cross", "far cross"]
 
 training_selection = 3
 
@@ -38,7 +38,6 @@ def	handle_startstop(_=None):
 		startswitch = 1 - startswitch
 		startstopB.config(relief=SUNKEN, text="◼ Stop Training")
 		probabilities = [prob.get() for prob in probs[:shot_amount.get()]]
-		shots = get_series_shots(series)
 		training_loopT = threading.Thread(target=t.training_loop, args=(training_selection, t.engine, shotcall_delay.get(), probabilities, shots[:shot_amount.get()], beepdelay.get(), series))
 		training_loopT.daemon = True
 		training_loopT.start()
@@ -70,47 +69,46 @@ def	press_button(button):
 		shot_amount.set(3)
 		series_button("brush")
 
+def	remove_probs():
+	probslider1.place_forget()
+	probslider2.place_forget()
+	probslider3.place_forget()
+	probslider4.place_forget()
+	probslider5.place_forget()
+	probslider6.place_forget()
+	probslider7.place_forget()
+	problabel1.place_forget()
+	problabel2.place_forget()
+	problabel3.place_forget()
+	problabel4.place_forget()
+	problabel5.place_forget()
+	problabel6.place_forget()
+	problabel7.place_forget()
+
 def	handle_shotcount():
-	if shot_amount.get() == 2:
+	global shots
+	for i, shot in enumerate(shots[:shot_amount.get()]):
+		shot.set(get_series_shots(series)[i])
+	remove_probs()
+	if shot_amount.get() >= 2:
 		probslider1.place(x=260, y=0)
 		probslider2.place(x=260, y=40)
-		probslider3.place_forget()
-		probslider4.place_forget()
-		probslider5.place_forget()
-		probslider6.place_forget()
-		probslider7.place_forget()
-	if shot_amount.get() == 3:
-		probslider1.place(x=260, y=0)
-		probslider2.place(x=260, y=40)
+		problabel1.place(x=70, y=15)
+		problabel2.place(x=70, y=55)
+	if shot_amount.get() >= 3:
 		probslider3.place(x=260, y=80)
-		probslider4.place_forget()
-		probslider5.place_forget()
-		probslider6.place_forget()
-		probslider7.place_forget()
-	if shot_amount.get() == 5:
-		probslider1.place(x=260, y=0)
-		probslider2.place(x=260, y=40)
-		probslider3.place(x=260, y=80)
+		problabel3.place(x=70, y=95)
+	if shot_amount.get() >= 5:
 		probslider4.place(x=260, y=120)
 		probslider5.place(x=260, y=160)
-		probslider6.place_forget()
-		probslider7.place_forget()
-	if shot_amount.get() == 6:
-		probslider1.place(x=260, y=0)
-		probslider2.place(x=260, y=40)
-		probslider3.place(x=260, y=80)
-		probslider4.place(x=260, y=120)
-		probslider5.place(x=260, y=160)
+		problabel4.place(x=70, y=135)
+		problabel5.place(x=70, y=175)
+	if shot_amount.get() >= 6:
 		probslider6.place(x=260, y=200)
-		probslider7.place_forget()
-	if shot_amount.get() == 7:
-		probslider1.place(x=260, y=0)
-		probslider2.place(x=260, y=40)
-		probslider3.place(x=260, y=80)
-		probslider4.place(x=260, y=120)
-		probslider5.place(x=260, y=160)
-		probslider6.place(x=260, y=200)
+		problabel6.place(x=70, y=215)
+	if shot_amount.get() >= 7:
 		probslider7.place(x=260, y=240)
+		problabel7.place(x=70, y=255)
 
 def	series_button(shot_type):
 	global series
@@ -139,6 +137,8 @@ mainwindow.title("Foos Timer")
 probs = [IntVar(), IntVar(), IntVar(), IntVar(), IntVar(), IntVar(), IntVar()]
 for prob in probs:
 	prob.set(5)
+
+shots = [StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar()]
 
 
 topframe = Frame(mainwindow, width=450, height=100)
@@ -201,6 +201,15 @@ probslider4 = Scale(probframe, from_=0, to=10, length=120, orient='horizontal', 
 probslider5 = Scale(probframe, from_=0, to=10, length=120, orient='horizontal', resolution=1, variable=probs[4])
 probslider6 = Scale(probframe, from_=0, to=10, length=120, orient='horizontal', resolution=1, variable=probs[5])
 probslider7 = Scale(probframe, from_=0, to=10, length=120, orient='horizontal', resolution=1, variable=probs[6])
+
+problabel1 = Label(probframe, textvar=shots[0], anchor="se", font=defaultfont, width=15)
+problabel2 = Label(probframe, textvar=shots[1], anchor="se", font=defaultfont, width=15)
+problabel3 = Label(probframe, textvar=shots[2], anchor="se", font=defaultfont, width=15)
+problabel4 = Label(probframe, textvar=shots[3], anchor="se", font=defaultfont, width=15)
+problabel5 = Label(probframe, textvar=shots[4], anchor="se", font=defaultfont, width=15)
+problabel6 = Label(probframe, textvar=shots[5], anchor="se", font=defaultfont, width=15)
+problabel7 = Label(probframe, textvar=shots[6], anchor="se", font=defaultfont, width=15)
+problabel3.place(x=100, y=0)
 
 # 3-BAR FRAME
 shot_type_3b = StringVar()
