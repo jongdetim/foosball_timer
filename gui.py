@@ -134,11 +134,11 @@ mainwindow = Tk()
 mainwindow.title("Foos Timer")
 # mainwindow.geometry('450x650')
 
-probs = [IntVar(), IntVar(), IntVar(), IntVar(), IntVar(), IntVar(), IntVar()]
+probs = [IntVar() for _ in range(7)]
 for prob in probs:
 	prob.set(5)
 
-shots = [StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar(),StringVar()]
+shots = [StringVar() for _ in range(7)]
 
 
 topframe = Frame(mainwindow, width=450, height=100)

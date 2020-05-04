@@ -75,10 +75,10 @@ def training_loop(training, engine, interval_range, weights, calls, beepdelay, s
 			check_pause()
 			output_sentence("time in", engine, 0)
 			loopfor(check_pause, clock, 1)
-			beep = threading.Thread(target=delayed_beep, args=((len(shotcall), beepdelay)))
+			beep = threading.Thread(target=delayed_beep, args=((len(shotcall.get()), beepdelay)))
 			beep.start()
-			output_sentence(shotcall, engine, 30)
-			print("%s %*d seconds" %(shotcall, 13 - len(shotcall), clock))
+			output_sentence(shotcall.get(), engine, 30)
+			print("%s %*d seconds" %(shotcall.get(), 13 - len(shotcall.get()), clock))
 			if training == 5:
 				loopfor(check_pause, 2.0, 1)
 			else:
