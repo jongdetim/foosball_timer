@@ -3,10 +3,10 @@
 block_cipher = None
 
 
-a = Analysis(['training_timer.py'],
+a = Analysis(['gui.py', 'training_timer.py'],
              pathex=['C:\\Users\\Tim\\Desktop\\Coding things\\foosball_timer\\gitmap'],
              binaries=[],
-             datas=[],
+             datas=[ ('football_icon.ico', '.') ],
              hiddenimports=['pyttsx3.drivers', 'pyttsx3.drivers.dummy', 'pyttsx3.drivers.espeak', 'pyttsx3.drivers.nsss', 'pyttsx3.drivers.sapi5'],
              hookspath=[],
              runtime_hooks=[],
@@ -21,12 +21,13 @@ exe = EXE(pyz,
           a.scripts,
           [],
           exclude_binaries=True,
-          name='training_timer',
+          name='Foos Trainer',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          console=True )
+          console=True,
+		  icon='football_icon.ico' )
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
@@ -34,4 +35,4 @@ coll = COLLECT(exe,
                strip=False,
                upx=True,
                upx_exclude=[],
-               name='training_timer')
+               name='Foos Trainer')

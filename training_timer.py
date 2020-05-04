@@ -69,7 +69,7 @@ def training_loop(training, engine, interval_range, weights, calls, beepdelay, s
 		loopfor(check_pause, 3, 1)
 		while 1:
 			check_pause()
-			clock = random.randrange(1, 2 + interval_range)
+			clock = round(random.uniform(1.0, 1.0 + interval_range), 1)
 			shotcall = random.choices(calls, weights)[0]
 			output_sentence("set up the ball", engine, -10)
 			check_pause()
@@ -78,7 +78,7 @@ def training_loop(training, engine, interval_range, weights, calls, beepdelay, s
 			beep = threading.Thread(target=delayed_beep, args=((len(shotcall.get()), beepdelay)))
 			beep.start()
 			output_sentence(shotcall.get(), engine, 30)
-			print("%s %*d seconds" %(shotcall.get(), 13 - len(shotcall.get()), clock))
+			print("%s %*.1f seconds" %(shotcall.get(), 13 - len(shotcall.get()), clock))
 			if training == 5:
 				loopfor(check_pause, 2.0, 1)
 			else:
