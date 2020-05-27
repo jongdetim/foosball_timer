@@ -2,6 +2,9 @@ from tkinter import *
 import threading
 import training_timer as t
 
+ICON_FILE = "football_icon.ico"
+ICON_PATH = sys.argv[0].rsplit('\\', 1)[0] + "\\" + ICON_FILE
+
 default_button = 8
 button_size_train = -6
 defaultfont = 'TkDefaultFont 10'
@@ -165,7 +168,7 @@ def	series_button(shot_type):
 mainwindow = Tk()
 
 mainwindow.title("Foos Trainer")
-mainwindow.iconbitmap('football_icon.ico')
+mainwindow.iconbitmap(ICON_PATH)
 # mainwindow.geometry('450x650')
 
 probs = [IntVar() for _ in range(7)]
